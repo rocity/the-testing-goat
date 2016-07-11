@@ -45,6 +45,13 @@ class HomePageTest(TestCase):
 
         response = home_page(request)
 
+        # check if an object is saved to the database
+        self.assertEqual(Item.objects.count(), 1)
+        new_item = Item.objects.first()
+
+        # check if the saved object is correct
+        self.assertEqual(new_item.text, 'A new list item')
+
         self.assertEqual(Item.objects.count(), 1)
         new_item = Item.objects.first()
         self.assertEqual(new_item.text, 'A new list item')
@@ -63,3 +70,13 @@ class HomePageTest(TestCase):
         request = HttpRequest()
         home_page(request)
         self.assertEqual(Item.objects.count(), 0)
+
+    def test_home_page_displays_all_list_items(self):
+        Item.objects.create(text='jellopy')
+        Item.objects.create(text='unripe apple')
+
+        request = HttpRequest()
+        response = home_page(request)
+
+        self.assertIn('jellopy', response.content.decode())
+        self.assertIn('unripe apple', response.content.decode())
