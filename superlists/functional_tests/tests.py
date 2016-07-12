@@ -67,7 +67,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Warrin visits the home page. There is no sign of Rey's list
         self.browser.get(self.live_server_url)
-        page_text = self.browser.find_elements_by_tag_name('body').text
+        page_text = self.browser.find_element_by_tag_name('body').text
         self.assertNotIn('Make coffee', page_text)
         self.assertNotIn('Go to the toilet', page_text)
 
@@ -75,7 +75,7 @@ class NewVisitorTest(LiveServerTestCase):
         # he is less interesting than Rey...
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Buy milk')
-        inputbox.send_keys(Keys.Enter)
+        inputbox.send_keys(Keys.ENTER)
 
         # Warrin gets his own unique URL
         warrin_list_url = self.browser.current_url
