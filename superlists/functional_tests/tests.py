@@ -38,29 +38,54 @@ class NewVisitorTest(LiveServerTestCase):
         # He types "Make coffee" into a text box (Rey can't work when he is sleepy)
         inputbox.send_keys('Make coffee')
 
-        # When he hits enter, the page updates, and now the page lists
-        # "1: Make coffee" as an item in a to-do list table
+        # When he hits enter, he is taken to a new URL,
+        # and now the page lists "1: Make coffee" as an item in a
+        # to-do list table
         inputbox.send_keys(Keys.ENTER)
+        rey_list_url = self.browser.current_url
+        self.assertRegex(rey_list_url, '/lists/.+')
+        self.check_for_row_in_list_table('1: Make coffee')
 
         # There is still a text box inviting him to add another item.
         # He enters "Go to the toilet" (Rey is very methodical)
         inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Go to the toilet')
         inputbox.send_keys(Keys.ENTER)
-        self.fail('Finish the test!')
-
-
+        
         # The page updates again, and now shows both items on his list
-
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.check_for_row_in_list_table('1: Make coffee'),
         self.check_for_row_in_list_table('2: Go to the toilet'),
-        
-        # Rey wonders whether the site will remember his list. Then he sees that
-        # the site has generated a unique URL for him
-        time.sleep(10)
 
-        # He visits that URL - his to-do list is still there
+        # Now a new user, Warrin comes along to the site.
 
-        # Satisfied, he goes back to sleep
+        ## We use a new browser session to make sure that no information
+        ## of Rey's is coming through from cookies etc #
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
+
+        # Warrin visits the home page. There is no sign of Rey's list
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_elements_by_tag_name('body').text
+        self.assertNotIn('Make coffee', page_text)
+        self.assertNotIn('Go to the toilet', page_text)
+
+        # Warrin starts a new list by entering a new item.
+        # he is less interesting than Rey...
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.Enter)
+
+        # Warrin gets his own unique URL
+        warrin_list_url = self.browser.current_url
+        self.assertRegex(warrin_list_url, '/lists/.+')
+        self.assertNotEqual(warrin_list_url, rey_list_url)
+
+        # Again, there is no trace of Edith's list
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Make coffee', page_text)
+        self.assertIn('Buy milk', page_text)
+
+        # Satisfied, they both go back to sleep
+        self.fail('Finish the test!')
