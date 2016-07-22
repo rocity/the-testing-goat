@@ -20,6 +20,14 @@ class HomePageTest(TestCase):
         expected_html = render_to_string('lists/home.html')
         self.assertEqual(response.content.decode(), expected_html)
 
+    def test_home_page_renders_home_template(self):
+        response = self.client.get('/')
+        self.assertTemplateUsed(response, 'lists/home.html')
+
+    def test_home_page_uses_item_form(self):
+        response = self.client.get('/')
+        self.assertIsInstance(response.context['form'], ItemForm)
+        
 class ListViewTest(TestCase):
 
     def setUp(self):
