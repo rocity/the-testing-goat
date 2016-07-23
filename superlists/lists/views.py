@@ -8,7 +8,7 @@ from .forms import ItemForm
 
 # Create your views here.
 def home_page(request):
-    return render(request, 'lists/home.html', {'form', ItemForm()})
+    return render(request, 'lists/home.html', {'form': ItemForm()})
 
 def view_list(request, list_id):
     list_ = List.objects.get(id=list_id)
