@@ -30,15 +30,22 @@ ALLOWED_HOSTS = ['rocity.pythonanywhere.com']
 
 # Application definition
 
-INSTALLED_APPS = [
-    'lists.apps.ListsConfig',
+INSTALLED_APPS = (
     # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
+    'lists',
+    'accounts'
+)
+
+AUTH_USER_MODEL = 'accounts.ListUser'
+
+AUTHENTICATION_BACKENDS = (
+    'accounts.authentication.PersonaAuthenticationBackend',
+    )
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
